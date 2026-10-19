@@ -1,6 +1,6 @@
 # Hearsay
 
-This is a one shotted project with Claude Opus 5.5 and some skills that I made.
+This is a one shotted project with Claude Opus 5.5 and some skills for [this person](https://www.reddit.com/r/chrome_extensions/comments/1x9md07/comment/phnb6jl/).
 
 Voice control for Chrome that ships with chess defaults.
 
