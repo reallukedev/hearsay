@@ -1,5 +1,7 @@
 # Hearsay
 
+This is a one shotted project with Claude 5.5 and some skills that I made.
+
 Voice control for Chrome that ships with chess defaults.
 
 Say **“e2 to e4”** and the move is played on chess.com: live games, bots, puzzles and analysis. Then give any other website its own voice commands, with no code unless you want it.
