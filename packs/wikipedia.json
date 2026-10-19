@@ -1,0 +1,40 @@
+{
+  "hearsay": 1,
+  "sites": [
+    {
+      "name": "Wikipedia",
+      "match": [
+        "https://en.wikipedia.org/*"
+      ],
+      "commands": [
+        {
+          "name": "Look something up",
+          "phrases": [
+            "look up {text}",
+            "search for {text}",
+            "what is {text}"
+          ],
+          "steps": [
+            {
+              "type": "url",
+              "url": "https://en.wikipedia.org/wiki/Special:Search?search={text}"
+            }
+          ]
+        },
+        {
+          "name": "Random article",
+          "phrases": [
+            "random article",
+            "surprise me"
+          ],
+          "steps": [
+            {
+              "type": "url",
+              "url": "https://en.wikipedia.org/wiki/Special:Random"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

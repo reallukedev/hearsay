@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Welcome to Hearsay</title>
+  <link rel="icon" href="../../icons/icon-32.png">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="welcome.css">
+  <script type="module" src="welcome.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <img src="../../icons/icon-128.png" alt="" width="64" height="64">
+      <h1>Talk to the board.</h1>
+      <p>Say moves like “e2 to e4” on chess.com. Give any other site its own voice commands. Three steps and you’re playing.</p>
+    </div>
+  </header>
+  <main class="wrap">
+    <ol class="steps">
+      <li class="step" id="step-mic">
+        <span class="num" aria-hidden="true">1</span>
+        <div class="body">
+          <h2>Allow the microphone</h2>
+          <p>Chrome asks once. Hearsay listens only while its panel is open.</p>
+          <div class="act">
+            <button type="button" class="btn" id="mic">Allow microphone</button>
+            <div class="meter" aria-hidden="true"><span id="level"></span></div>
+          </div>
+          <p class="note" id="micNote" role="status"></p>
+        </div>
+      </li>
+      <li class="step" id="step-panel">
+        <span class="num" aria-hidden="true">2</span>
+        <div class="body">
+          <h2>Open Hearsay beside the page</h2>
+          <p>It lives in Chrome’s side panel. Next time, use the toolbar icon or <kbd id="panelKey">Alt Shift H</kbd>. Pin the icon from the puzzle-piece menu so it’s always there.</p>
+          <div class="act"><button type="button" class="btn" id="panel">Open the panel</button></div>
+        </div>
+      </li>
+      <li class="step" id="step-try">
+        <span class="num" aria-hidden="true">3</span>
+        <div class="body">
+          <h2>Say your first move</h2>
+          <p>Open a board and say <strong>“e2 to e4”</strong>. Press <kbd id="toggleKey">Alt Shift V</kbd> any time to pause or resume.</p>
+          <div class="act">
+            <a class="btn" href="https://www.chess.com/analysis" target="_blank" rel="noopener">Open a chess.com board</a>
+            <a class="btn btn-soft" href="../options/options.html#sites">Add commands for other sites</a>
+          </div>
+        </div>
+      </li>
+    </ol>
+    <p class="foot">Hearsay is free and open source. It has no servers and keeps your settings in this browser.</p>
+  </main>
+</body>
+</html>

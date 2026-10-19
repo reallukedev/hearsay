@@ -1,0 +1,40 @@
+{
+  "hearsay": 1,
+  "sites": [
+    {
+      "name": "Google Search",
+      "match": [
+        "https://www.google.com/*"
+      ],
+      "commands": [
+        {
+          "name": "Search Google",
+          "phrases": [
+            "search for {text}",
+            "google {text}"
+          ],
+          "steps": [
+            {
+              "type": "url",
+              "url": "https://www.google.com/search?q={text}"
+            }
+          ]
+        },
+        {
+          "name": "Open a result by number",
+          "phrases": [
+            "open result {number}",
+            "result {number}"
+          ],
+          "steps": [
+            {
+              "type": "js",
+              "world": "USER_SCRIPT",
+              "code": "const links = [...document.querySelectorAll('#search a h3')].map((h) => h.closest('a'));\nconst link = links[Number(slots.number) - 1];\nif (link) link.click();"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

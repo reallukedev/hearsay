@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hearsay settings</title>
+  <link rel="icon" href="../../icons/icon-32.png">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="options.css">
+  <script type="module" src="options.js"></script>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to settings</a>
+  <div class="shell">
+    <nav class="rail" aria-label="Settings sections">
+      <a class="brand" href="#listening"><img src="../../icons/icon-48.png" alt="" width="32" height="32"><span>Hearsay</span></a>
+      <ul>
+        <li><a href="#sites" data-nav="sites">Sites</a></li>
+        <li><a href="#listening" data-nav="listening">Listening</a></li>
+        <li><a href="#chess" data-nav="chess">Chess.com</a></li>
+        <li><a href="#commands" data-nav="commands">Built-in commands</a></li>
+        <li><a href="#setup" data-nav="setup">Setup</a></li>
+        <li><a href="#privacy" data-nav="privacy">Privacy</a></li>
+      </ul>
+      <p class="saved" id="saved" role="status" aria-live="polite"></p>
+    </nav>
+
+    <main id="content" tabindex="-1">
+      <!-- Sites: list or editor, rendered by options.js -->
+      <section class="panel" id="sites" aria-labelledby="sites-h"></section>
+
+      <section class="panel" id="listening" aria-labelledby="listening-h">
+        <h1 id="listening-h">Listening</h1>
+        <div class="group">
+          <label class="row">
+            <span class="row-text"><strong>Language</strong><small>The language you speak commands in.</small></span>
+            <select id="lang">
+              <option value="en-US">English (US)</option>
+              <option value="en-GB">English (UK)</option>
+              <option value="en-AU">English (Australia)</option>
+              <option value="en-CA">English (Canada)</option>
+              <option value="en-IN">English (India)</option>
+              <option value="en-IE">English (Ireland)</option>
+              <option value="en-NZ">English (New Zealand)</option>
+              <option value="en-ZA">English (South Africa)</option>
+            </select>
+          </label>
+          <div class="row">
+            <span class="row-text" id="engine-l"><strong>Speech recognition</strong><small id="engineNote">Automatic uses on-device recognition when Chrome has it, and Chrome’s online service otherwise.</small></span>
+            <div class="seg" role="radiogroup" aria-labelledby="engine-l" data-pref="engine">
+              <button type="button" role="radio" data-value="auto">Automatic</button>
+              <button type="button" role="radio" data-value="local">On this device</button>
+              <button type="button" role="radio" data-value="cloud">Online</button>
+            </div>
+          </div>
+          <div class="row" id="localRow" hidden>
+            <span class="row-text"><strong>On-device speech model</strong><small id="localNote"></small></span>
+            <button type="button" class="btn-secondary" id="localInstall">Download</button>
+          </div>
+          <div class="row">
+            <span class="row-text"><strong>Start listening when the panel opens</strong><small>Open the panel with the toolbar button or Alt Shift H.</small></span>
+            <button type="button" class="switch" role="switch" data-pref="startOnOpen"><span class="sr-only">Start listening when the panel opens</span></button>
+          </div>
+          <div class="row">
+            <span class="row-text"><strong>Sounds</strong><small>A short tone when something is played, needs an answer, or doesn’t work.</small></span>
+            <button type="button" class="switch" role="switch" data-pref="sounds"><span class="sr-only">Sounds</span></button>
+          </div>
+          <div class="row">
+            <span class="row-text"><strong>Read results aloud</strong><small>Hearsay says what it did. It ignores its own voice while speaking.</small></span>
+            <button type="button" class="switch" role="switch" data-pref="speakResults"><span class="sr-only">Read results aloud</span></button>
+          </div>
+        </div>
+
+        <h2>Everyday commands</h2>
+        <p class="lead">Scroll, go back, switch tabs and “click” anything by its name.</p>
+        <div class="group">
+          <div class="row">
+            <span class="row-text"><strong>On chess.com and sites you’ve added</strong></span>
+            <button type="button" class="switch" role="switch" data-pref="everyday"><span class="sr-only">Everyday commands on chess.com and your sites</span></button>
+          </div>
+          <div class="row">
+            <span class="row-text"><strong>On every website</strong><small>Chrome will ask to let Hearsay read and change pages on all sites. It only acts when you speak.</small></span>
+            <button type="button" class="switch" role="switch" id="everywhere"><span class="sr-only">Everyday commands on every website</span></button>
+          </div>
+        </div>
+
+        <h2>Test your microphone</h2>
+        <div class="mictest">
+          <button type="button" class="btn-primary" id="micTest">Start the test</button>
+          <div class="meter" aria-hidden="true"><span id="micLevel"></span></div>
+          <p class="heard" id="micHeard" aria-live="polite">Say “e two to e four” and see what Hearsay hears.</p>
+        </div>
+      </section>
+
+      <section class="panel" id="chess" aria-labelledby="chess-h">
+        <h1 id="chess-h">Chess.com</h1>
+        <p class="lead">Say a move as two squares: “e2 to e4”. Works in games, bots, puzzles, lessons and analysis.</p>
+        <div class="group">
+          <div class="row">
+            <span class="row-text" id="confirm-l"><strong>Ask before playing a move</strong><small>For slower games. You answer “yes” or “cancel”.</small></span>
+            <div class="seg" role="radiogroup" aria-labelledby="confirm-l" data-pref="chess.confirm">
+              <button type="button" role="radio" data-value="never">Never</button>
+              <button type="button" role="radio" data-value="always">Always</button>
+            </div>
+          </div>
+          <div class="row">
+            <span class="row-text"><strong>Allow piece names</strong><small>Also accept “knight f3” and “bishop takes e5”. Squares always work.</small></span>
+            <button type="button" class="switch" role="switch" data-pref="chess.pieceNames"><span class="sr-only">Allow piece names</span></button>
+          </div>
+          <div class="row">
+            <span class="row-text"><strong>Show what I said on the board</strong><small>Outlines the squares while you speak and marks the move once it’s played.</small></span>
+            <button type="button" class="switch" role="switch" data-pref="chess.overlay"><span class="sr-only">Show what I said on the board</span></button>
+          </div>
+          <div class="row">
+            <span class="row-text"><strong>Read the other side’s moves aloud</strong></span>
+            <button type="button" class="switch" role="switch" data-pref="chess.announceOpponent"><span class="sr-only">Read the other side’s moves aloud</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="commands" aria-labelledby="commands-h">
+        <h1 id="commands-h">Built-in commands</h1>
+        <p class="lead">Say any of these. Words in a row mean the same thing.</p>
+        <div id="commandList" class="reference"></div>
+      </section>
+
+      <section class="panel" id="setup" aria-labelledby="setup-h">
+        <h1 id="setup-h">Setup</h1>
+        <div class="group" id="setupList"></div>
+      </section>
+
+      <section class="panel" id="privacy" aria-labelledby="privacy-h">
+        <h1 id="privacy-h">Privacy</h1>
+        <div class="prose">
+          <p>Hearsay has no servers and no account. Your settings and site commands stay in this browser.</p>
+          <p>Speech is turned into text by Chrome. With on-device recognition it never leaves your computer; with Chrome’s online service, Google processes the audio the same way it does for voice search.</p>
+          <p>Hearsay only listens while its side panel is open. While paused it waits for “resume” and ignores everything else.</p>
+          <p>Gemini Nano runs on your computer. The page outline it sees when drafting code stays on your computer too.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <template id="tpl-dialog">
+    <dialog class="dialog"><form method="dialog"><h2></h2><p></p><div class="dialog-actions"><button value="cancel" class="btn-secondary">Cancel</button><button value="ok" class="btn-danger">OK</button></div></form></dialog>
+  </template>
+</body>
+</html>

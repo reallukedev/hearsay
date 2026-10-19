@@ -1,0 +1,35 @@
+body { background: var(--oat); color: var(--ink); line-height: 1.45; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 clamp(16px, 5vw, 32px); }
+.hero { background: var(--pine); color: #f3f0e6; padding: clamp(40px, 8vw, 80px) 0 clamp(48px, 9vw, 96px); border-radius: 0 0 36px 36px; }
+.hero img { border-radius: 16px; display: block; margin-bottom: 26px; }
+.hero h1 { margin: 0; font-size: clamp(44px, 9vw, 84px); font-weight: 900; letter-spacing: -0.04em; line-height: 0.95; color: var(--lime); }
+.hero p { margin: 18px 0 0; max-width: 34ch; font-size: clamp(18px, 2.4vw, 22px); font-weight: 600; color: rgba(243, 240, 230, 0.8); }
+
+.steps { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 14px; }
+.step { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 18px; background: var(--paper); border-radius: var(--r-xl); padding: 22px; transition: box-shadow 0.25s var(--ease-out); }
+.step.done { box-shadow: 0 0 0 3px var(--lime); }
+.num { width: 48px; height: 48px; border-radius: 15px; background: var(--ink); color: var(--oat); display: grid; place-items: center; font-weight: 900; font-size: 22px; transition: background-color 0.25s var(--ease-out), color 0.25s var(--ease-out); }
+.step.done .num { background: var(--lime); color: #16271f; font-size: 0; }
+.step.done .num::after { content: ''; width: 18px; height: 10px; border: solid #16271f; border-width: 0 0 4px 4px; transform: translateY(-2px) rotate(-45deg); }
+.step h2 { margin: 6px 0 4px; font-size: 22px; font-weight: 800; letter-spacing: -0.015em; }
+.step p { margin: 0; color: var(--ink-2); max-width: 58ch; }
+.step strong { color: var(--ink); }
+.act { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 16px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 20px; border-radius: 14px; border: 0; background: var(--pine); color: #f3f0e6; font-weight: 800; font-size: 16px; text-decoration: none; cursor: pointer; transition: background-color 0.15s var(--ease-out), transform 0.12s var(--ease-out); }
+.btn:hover { background: var(--pine-deep); }
+.btn:active { transform: scale(0.98); }
+.btn-soft { background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--ink); }
+.btn-soft:hover { background: color-mix(in srgb, var(--ink) 13%, transparent); }
+.meter { flex: 1 1 160px; height: 12px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 8%, transparent); overflow: hidden; }
+.meter span { display: block; height: 100%; width: 100%; background: var(--pine); border-radius: inherit; transform: scaleX(0); transform-origin: left; }
+.note { margin-top: 10px !important; font-weight: 700; }
+.note:empty { display: none; }
+kbd { font: 700 14px var(--font); padding: 2px 7px; border-radius: 7px; background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--ink); white-space: nowrap; }
+.foot { margin: 28px 0 60px; color: var(--ink-3); font-size: 15px; }
+
+@media (max-width: 520px) {
+  .step { grid-template-columns: 1fr; gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .step, .num, .btn { transition: none; }
+}

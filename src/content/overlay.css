@@ -1,0 +1,65 @@
+/* Drawn over chess.com's board. Everything is prefixed so it can't collide with the page. */
+@font-face {
+  font-family: 'Hearsay Grotesk';
+  src: url('chrome-extension://__MSG_@@extension_id__/fonts/HankenGrotesk-latin.woff2') format('woff2');
+  font-weight: 400 900;
+}
+
+.hearsay-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2147483000;
+  contain: layout style;
+}
+
+.hearsay-sq {
+  position: absolute;
+  left: 0;
+  top: 0;
+  box-sizing: border-box;
+  transition: opacity 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hearsay-preview {
+  box-shadow: inset 0 0 0 4px #173f35, inset 0 0 0 7px rgba(201, 241, 106, 0.95);
+  border-radius: 6px;
+}
+
+.hearsay-played {
+  background: rgba(201, 241, 106, 0.55);
+  box-shadow: inset 0 0 0 3px rgba(23, 63, 53, 0.55);
+  animation: hearsay-pop 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hearsay-option {
+  background: rgba(255, 194, 122, 0.45);
+  box-shadow: inset 0 0 0 4px #ffc27a;
+}
+
+.hearsay-option::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 6%;
+  left: 6%;
+  min-width: 34%;
+  height: 34%;
+  display: grid;
+  place-items: center;
+  border-radius: 28%;
+  background: #2c1a08;
+  color: #ffc27a;
+  font: 800 clamp(12px, 2.2vmin, 22px) / 1 'Hearsay Grotesk', system-ui, sans-serif;
+}
+
+.hearsay-out {
+  opacity: 0;
+}
+
+@keyframes hearsay-pop {
+  from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hearsay-sq { transition: none; animation: none; }
+}

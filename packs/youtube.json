@@ -1,0 +1,125 @@
+{
+  "hearsay": 1,
+  "sites": [
+    {
+      "name": "YouTube",
+      "match": [
+        "https://www.youtube.com/*"
+      ],
+      "commands": [
+        {
+          "name": "Play or pause",
+          "phrases": [
+            "play",
+            "pause video",
+            "pause it",
+            "resume video"
+          ],
+          "steps": [
+            {
+              "type": "keys",
+              "keys": "k"
+            }
+          ]
+        },
+        {
+          "name": "Skip ahead 10 seconds",
+          "phrases": [
+            "skip ahead",
+            "skip forward",
+            "forward ten seconds"
+          ],
+          "steps": [
+            {
+              "type": "keys",
+              "keys": "l"
+            }
+          ]
+        },
+        {
+          "name": "Back 10 seconds",
+          "phrases": [
+            "rewind",
+            "back ten seconds",
+            "go back a bit"
+          ],
+          "steps": [
+            {
+              "type": "keys",
+              "keys": "j"
+            }
+          ]
+        },
+        {
+          "name": "Captions on or off",
+          "phrases": [
+            "captions",
+            "subtitles",
+            "toggle captions"
+          ],
+          "steps": [
+            {
+              "type": "keys",
+              "keys": "c"
+            }
+          ]
+        },
+        {
+          "name": "Fullscreen",
+          "phrases": [
+            "fullscreen",
+            "full screen",
+            "exit fullscreen"
+          ],
+          "steps": [
+            {
+              "type": "keys",
+              "keys": "f"
+            }
+          ]
+        },
+        {
+          "name": "Mute or unmute",
+          "phrases": [
+            "mute video",
+            "unmute",
+            "mute it"
+          ],
+          "steps": [
+            {
+              "type": "keys",
+              "keys": "m"
+            }
+          ]
+        },
+        {
+          "name": "Next video",
+          "phrases": [
+            "next video",
+            "skip video"
+          ],
+          "steps": [
+            {
+              "type": "keys",
+              "keys": "Shift+N"
+            }
+          ]
+        },
+        {
+          "name": "Search YouTube",
+          "phrases": [
+            "search for {text}",
+            "find {text}",
+            "youtube {text}"
+          ],
+          "steps": [
+            {
+              "type": "url",
+              "url": "https://www.youtube.com/results?search_query={text}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+/* Hearsay design tokens. State colors are the core of the system: the panel's whole field
+   takes the color of what the microphone is doing. */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('../../fonts/HankenGrotesk-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('../../fonts/HankenGrotesk-latin-ext.woff2') format('woff2');
+  font-weight: 100 900;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --pine: #173f35;
+  --pine-deep: #0f2c25;
+  --lime: #c9f16a;
+  --apricot: #ffc27a;
+  --coral: #ff7a63;
+  --stone: #e8e3d8;
+  --oat: #f4f1e9;
+  --paper: #fbfaf6;
+  --ink: #1d1b16;
+  --ink-2: #4c473e;
+  --ink-3: #6f695e;
+  --line: #e1dbcd;
+  --focus: #2f6bff;
+
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+
+  --font: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-swap: cubic-bezier(0.4, 0, 0.2, 1);
+
+  color-scheme: light;
+}
+
+/* Settings and onboarding pages follow the system theme. The panel's state fields are the same
+   in both themes because they are signals, but its neutral surfaces switch too. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --oat: #191714;
+    --paper: #221f1b;
+    --stone: #2c2925;
+    --ink: #f1ede4;
+    --ink-2: #cfc8bb;
+    --ink-3: #a59d90;
+    --line: #37332d;
+    --focus: #8fb0ff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --oat: #191714;
+  --paper: #221f1b;
+  --stone: #2c2925;
+  --ink: #f1ede4;
+  --ink-2: #cfc8bb;
+  --ink-3: #a59d90;
+  --line: #37332d;
+  --focus: #8fb0ff;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; font-family: var(--font); -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+::selection { background: var(--lime); color: #16271f; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+[hidden] { display: none !important; }
