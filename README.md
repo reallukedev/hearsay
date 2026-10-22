@@ -12,7 +12,7 @@ Hearsay started as a replacement for a chess.com voice extension that stopped wo
 
 ## Install
 
-1. Download `hearsay-v1.0.0.zip` from the [latest release](../../releases/latest) and unzip it.
+1. Download `hearsay-v1.1.0.zip` from the [latest release](../../releases/latest) and unzip it.
 2. Open `chrome://extensions` and turn on **Developer mode** (top right).
 3. Click **Load unpacked** and choose the unzipped folder.
 4. A welcome tab opens. Allow the microphone, open the panel, and say your first move.

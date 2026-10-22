@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Hearsay: voice control for chess.com, lichess and any site",
   "short_name": "Hearsay",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Play chess.com and lichess by saying moves like \"e2 to e4\", and give any website your own voice commands.",
   "minimum_chrome_version": "138",
   "icons": {
