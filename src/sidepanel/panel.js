@@ -1,4 +1,4 @@
-import { getPrefs, getSites, saveSites, newId, isChessCom, originPattern } from '../shared/settings.js';
+import { getPrefs, getSites, saveSites, newId, isChessSite, isLichess, originPattern } from '../shared/settings.js';
 import { CHESS_COMMANDS, EVERYDAY_COMMANDS, GLOBAL_COMMANDS } from '../shared/commands.js';
 import { Listener, speechSupported, micPermission } from './speech.js';
 import { route, commandsFor, canTouch, cancelPending } from './router.js';
@@ -244,19 +244,19 @@ async function refreshContext() {
   try { host = new URL(url).hostname.replace(/^www\./, ''); } catch { /* not a web page */ }
   const commands = commandsFor(url, state.sites);
   const siteName = commands[0]?.site?.name ?? null;
-  const everyday = state.prefs.everyday && (isChessCom(url) || commands.length > 0 || state.prefs.everydayEverywhere) && (await canTouch(url));
+  const everyday = state.prefs.everyday && (isChessSite(url) || commands.length > 0 || state.prefs.everydayEverywhere) && (await canTouch(url));
   let ctx;
   if (!origin) ctx = { kind: 'browser' };
-  else if (isChessCom(url)) {
+  else if (isChessSite(url)) {
     const info = tab?.id != null ? await chrome.tabs.sendMessage(tab.id, { type: 'hearsay:context' }).catch(() => null) : null;
-    ctx = { kind: 'chess', host, commands, siteName: 'chess.com', everyday, examples: info?.examples ?? [], status: info?.board ? info.status : 'Open a game, puzzle or lesson' };
+    ctx = { kind: 'chess', host, commands, siteName: isLichess(url) ? 'lichess' : 'chess.com', everyday, examples: info?.examples ?? [], status: info?.board ? info.status : 'Open a game, puzzle or lesson' };
   } else if (commands.length) ctx = { kind: 'site', host, commands, siteName, everyday };
   else if (everyday) ctx = { kind: 'site', host, commands, siteName: null, everyday };
   else ctx = { kind: 'unknown', host };
   state.context = ctx;
 
   els.ctx.hidden = false;
-  els.ctxText.textContent = ctx.kind === 'browser' ? 'Browser page' : ctx.kind === 'chess' ? 'chess.com · Chess' : siteName ? `${host} · ${siteName}` : host;
+  els.ctxText.textContent = ctx.kind === 'browser' ? 'Browser page' : ctx.kind === 'chess' ? `${ctx.siteName} · Chess` : siteName ? `${host} · ${siteName}` : host;
   const icon = tab?.favIconUrl && /^https?:/.test(tab.favIconUrl) ? tab.favIconUrl : '';
   els.ctxIcon.hidden = !icon;
   if (icon) els.ctxIcon.src = icon;

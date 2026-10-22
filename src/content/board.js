@@ -1,4 +1,4 @@
-// chess.com: reads the board, plays spoken moves by clicking squares, draws the on-board overlay.
+// chess.com and lichess: reads the board, plays spoken moves by clicking squares, draws the on-board overlay.
 import { parseFen, legalMoves, withTurn, pieceAt, PIECE_NAMES } from '../shared/chess.js';
 import { parseMove, describeMove } from '../shared/move-parse.js';
 import { CHESS_COMMANDS, matchAlternatives } from '../shared/commands.js';
@@ -7,6 +7,9 @@ const FILES = 'abcdefgh';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const arrow = (m) => (/[kq]/.test(m.flags ?? '') && m.piece === 'k' ? `Castled ${m.flags.includes('k') ? 'short' : 'long'}` : `${m.from} → ${m.to}${m.promotion ? ` ${PIECE_NAMES[m.promotion]}` : ''}`);
 const colorName = (c) => (c === 'w' ? 'White' : 'Black');
+
+const LICHESS = /(^|\.)lichess\.org$/.test(location.hostname);
+const HEARSAY_MARK = 7351; // lichess-bridge.js lets marked synthetic events through
 
 let pending = null; // { kind: 'moves', moves } | { kind: 'resign' }
 let ourLastMove = null;
@@ -32,7 +35,50 @@ function askBridge() {
 }
 
 function boardElements() {
-  return [...document.querySelectorAll('wc-chess-board, chess-board')];
+  return [...document.querySelectorAll(LICHESS ? 'cg-board' : 'wc-chess-board, chess-board')];
+}
+
+const isFlipped = (el) => (LICHESS ? !!el.closest('.cg-wrap')?.classList.contains('orientation-black') : el.classList.contains('flipped'));
+
+// Lichess draws pieces as <piece class="white pawn" style="transform: translate(x, y)">.
+function lichessPieces(el, flipped) {
+  const size = el.getBoundingClientRect().width / 8;
+  const out = [];
+  if (!size) return out;
+  for (const p of el.querySelectorAll('piece')) {
+    if (p.classList.contains('ghost') || p.classList.contains('fading')) continue;
+    const color = p.classList.contains('white') ? 'w' : p.classList.contains('black') ? 'b' : null;
+    const role = ['pawn', 'knight', 'bishop', 'rook', 'queen', 'king'].find((r) => p.classList.contains(r));
+    const t = p.style.transform.match(/translate\(([\d.]+)px,\s*([\d.]+)px\)/);
+    if (!color || !role || !t) continue;
+    const col = Math.round(Number(t[1]) / size), row = Math.round(Number(t[2]) / size);
+    out.push({ color, piece: role === 'knight' ? 'n' : role[0], file: flipped ? 7 - col : col, rank: flipped ? row : 7 - row });
+  }
+  return out;
+}
+
+// What the page shows about a lichess game: your side, whose turn, the last move, whether it ended.
+function lichessInfo(el, flipped) {
+  const main = document.querySelector('main');
+  const inGame = !!main?.classList.contains('round');
+  const inPuzzle = !!main?.classList.contains('puzzle');
+  const bottom = flipped ? 'b' : 'w';
+  const playable = !!el.closest('.cg-wrap')?.classList.contains('manipulable');
+  const you = (inGame || inPuzzle) && playable ? bottom : null;
+  const other = bottom === 'w' ? 'b' : 'w';
+  let turn = null;
+  if (document.querySelector('.rclock-bottom.running')) turn = bottom;
+  else if (document.querySelector('.rclock-top.running')) turn = other;
+  else if (inGame) turn = document.querySelectorAll('rm6 l4x kwdb').length % 2 ? 'b' : 'w';
+  else if (inPuzzle) turn = you;
+  const size = el.getBoundingClientRect().width / 8;
+  const squares = [...el.querySelectorAll('square.last-move')].map((q) => {
+    const t = q.style.transform.match(/translate\(([\d.]+)px,\s*([\d.]+)px\)/);
+    if (!t || !size) return null;
+    const col = Math.round(Number(t[1]) / size), row = Math.round(Number(t[2]) / size);
+    return FILES[flipped ? 7 - col : col] + String(flipped ? row + 1 : 8 - row);
+  }).filter(Boolean);
+  return { you, turn, lastSquares: squares, over: inGame && !!document.querySelector('.result-wrap'), mode: inGame ? 'game' : inPuzzle ? 'puzzle' : 'analysis' };
 }
 
 function visibleArea(el) {
@@ -43,9 +89,10 @@ function visibleArea(el) {
 }
 
 // FEN from the piece elements, for boards whose game object we can't read.
-function fenFromDom(el, turn) {
+function fenFromDom(el, turn, flipped) {
   const rows = Array.from({ length: 8 }, () => Array(8).fill(null));
-  for (const p of el.querySelectorAll('.piece')) {
+  if (LICHESS) for (const p of lichessPieces(el, flipped)) rows[7 - p.rank][p.file] = p.color === 'w' ? p.piece.toUpperCase() : p.piece;
+  else for (const p of el.querySelectorAll('.piece')) {
     const cls = p.className;
     const kind = cls.match(/\b([wb])([pnbrqk])\b/);
     const sq = cls.match(/\bsquare-(\d)(\d)\b/);
@@ -76,13 +123,22 @@ async function readBoard() {
   });
   if (!best) return null;
   const info = states.find((s) => s.index === best.index) ?? {};
-  const flipped = best.el.classList.contains('flipped');
+  const flipped = isFlipped(best.el);
+  const page = LICHESS && !info.fen ? lichessInfo(best.el, flipped) : null;
+  if (page) Object.assign(info, { playingAs: page.you, mode: page.mode, over: page.over });
   const bottom = flipped ? 'b' : 'w';
   let fen = info.fen;
   let pos;
   try { pos = fen ? parseFen(fen) : null; } catch { pos = null; }
   // No game object: guess whose turn it is from the board orientation.
-  if (!pos) pos = parseFen(fenFromDom(best.el, info.playingAs ?? bottom));
+  if (!pos) pos = parseFen(fenFromDom(best.el, page?.turn ?? info.playingAs ?? bottom, flipped));
+  if (page?.lastSquares.length === 2) {
+    // The square that now holds a piece is where the last move went.
+    const [a, b] = page.lastSquares;
+    const to = pieceAt(pos, a) ? a : b, from = to === a ? b : a;
+    const p = pieceAt(pos, to);
+    if (p) info.lastMove = { from, to, san: '', color: p.color };
+  }
   const you = info.playingAs ?? null;
   // Opponent to move in a game: your clicks become premoves, so offer your own moves.
   const moveFor = you && you !== pos.turn ? you : pos.turn;
@@ -103,6 +159,12 @@ function squarePoint(board, square) {
 }
 
 function press(target, { x, y }) {
+  if (LICHESS) {
+    const base = { bubbles: true, cancelable: true, composed: true, clientX: x, clientY: y, button: 0, detail: HEARSAY_MARK, view: window };
+    target.dispatchEvent(new MouseEvent('mousedown', { ...base, buttons: 1 }));
+    document.dispatchEvent(new MouseEvent('mouseup', { ...base, buttons: 0 }));
+    return;
+  }
   const base = { bubbles: true, cancelable: true, composed: true, clientX: x, clientY: y, button: 0, pointerId: 1, pointerType: 'mouse', isPrimary: true, view: window };
   target.dispatchEvent(new PointerEvent('pointerdown', { ...base, buttons: 1 }));
   target.dispatchEvent(new PointerEvent('pointerup', { ...base, buttons: 0 }));
@@ -110,11 +172,15 @@ function press(target, { x, y }) {
 
 async function choosePromotion(color, piece) {
   for (let i = 0; i < 10; i++) {
-    const option = document.querySelector(`.promotion-window .promotion-piece.${color}${piece}, .promotion-piece.${color}${piece}`);
+    const role = { q: 'queen', r: 'rook', b: 'bishop', n: 'knight' }[piece];
+    const option = LICHESS
+      ? document.querySelector(`#promotion-choice piece.${role}.${color === 'w' ? 'white' : 'black'}`)?.closest('square')
+      : document.querySelector(`.promotion-window .promotion-piece.${color}${piece}, .promotion-piece.${color}${piece}`);
     if (option) {
       const r = option.getBoundingClientRect();
       press(option, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
-      option.click?.();
+      if (LICHESS) option.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: HEARSAY_MARK }));
+      else option.click?.();
       return true;
     }
     await sleep(40);
@@ -173,16 +239,16 @@ function key(k) {
 }
 
 const BUTTONS = {
-  flip: [/flip board/i, /flip/i, /rotate board/i],
-  undo: [/take ?back/i, /^undo\b/i],
+  flip: [/flip board/i, /flip the board/i, /flip/i, /rotate board/i],
+  undo: [/propose a takeback/i, /take ?back/i, /^undo\b/i],
   resign: [/\bresign\b/i, /\babort\b/i],
   draw: [/accept draw/i, /offer draw/i, /\bdraw\b/i],
   rematch: [/rematch/i],
-  newgame: [/new \d+ min/i, /new game/i, /play again/i],
-  next: [/next puzzle/i, /next lesson/i, /^next$/i, /continue/i, /next challenge/i],
+  newgame: [/new \d+ min/i, /new opponent/i, /new game/i, /play again/i],
+  next: [/next puzzle/i, /continue training/i, /next lesson/i, /^next$/i, /continue/i, /next challenge/i],
   retry: [/retry/i, /try again/i, /restart/i],
   hint: [/\bhint\b/i],
-  solution: [/solution/i, /show answer/i],
+  solution: [/solution/i, /view the solution/i, /show answer/i],
 };
 
 async function runCommand(cmd) {
@@ -204,7 +270,7 @@ async function confirmResign() {
   btn.click();
   for (let i = 0; i < 15; i++) {
     await sleep(80);
-    const yes = findButton([/^yes$/i, /^resign$/i, /yes, resign/i, /confirm/i]);
+    const yes = (LICHESS && document.querySelector('.act-confirm button.yes, .fbt.yes')) || findButton([/^yes$/i, /^resign$/i, /yes, resign/i, /confirm/i]);
     if (yes && yes !== btn) { yes.click(); break; }
   }
   return done('Resigned', 'Good game.');

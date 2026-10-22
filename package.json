@@ -2,7 +2,7 @@
   "name": "hearsay",
   "version": "1.0.0",
   "private": true,
-  "description": "Voice control for chess.com and any website. Chrome extension.",
+  "description": "Voice control for chess.com, lichess and any website. Chrome extension.",
   "type": "module",
   "license": "MIT",
   "scripts": {

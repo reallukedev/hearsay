@@ -2,7 +2,7 @@
 // Order: an open question first, then Hearsay's own words, your site commands, chess.com, everyday commands.
 import { GLOBAL_COMMANDS, EVERYDAY_COMMANDS, matchAlternatives, parseChoice } from '../shared/commands.js';
 import { matchPhrase, compile } from '../shared/phrases.js';
-import { siteMatches, isChessCom, originPattern } from '../shared/settings.js';
+import { siteMatches, isChessSite, originPattern } from '../shared/settings.js';
 
 const KEY_WORDS = { enter: 'Enter', escape: 'Escape', space: 'space', tab: 'Tab' };
 
@@ -19,7 +19,7 @@ export function commandsFor(url, sites) {
 export async function canTouch(url) {
   const origin = originPattern(url);
   if (!origin) return false;
-  if (isChessCom(url)) return true;
+  if (isChessSite(url)) return true;
   try { return await chrome.permissions.contains({ origins: [origin] }); } catch { return false; }
 }
 
@@ -93,7 +93,7 @@ export async function route(alternatives, { tab, prefs, sites, pending }) {
   }
 
   // 4. chess.com moves and buttons.
-  if (isChessCom(url) && tabId != null) {
+  if (isChessSite(url) && tabId != null) {
     const res = await send(tabId, { type: 'hearsay:utterance', alternatives, prefs });
     if (res?.handled) {
       const out = res.result;
@@ -102,7 +102,7 @@ export async function route(alternatives, { tab, prefs, sites, pending }) {
   }
 
   // 5. Everyday commands: scrolling, clicking by name, tabs.
-  const everydayHere = prefs.everyday && (isChessCom(url) || mine.length || prefs.everydayEverywhere);
+  const everydayHere = prefs.everyday && (isChessSite(url) || mine.length || prefs.everydayEverywhere);
   if (everydayHere && tabId != null && (await canTouch(url))) {
     const hit = matchAlternatives(EVERYDAY_COMMANDS, alternatives, 0.8);
     if (hit) return runEverydayHit(hit, tabId);

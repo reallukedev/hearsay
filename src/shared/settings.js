@@ -72,3 +72,6 @@ export function originPattern(url) {
 }
 
 export const isChessCom = (url) => /^https:\/\/(www\.)?chess\.com\//.test(url ?? '');
+export const isLichess = (url) => /^https:\/\/lichess\.org\//.test(url ?? '');
+// A site Hearsay plays chess on out of the box.
+export const isChessSite = (url) => isChessCom(url) || isLichess(url);

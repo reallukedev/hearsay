@@ -89,3 +89,26 @@ test('a site command built in settings runs from its phrase', async () => {
   await expect(board).toHaveURL(/chess\.com\/daily/);
   await app.worker.evaluate(() => chrome.storage.local.remove('sites'));
 });
+
+// Lichess sometimes puts headless browsers behind a bot check; then this test can't run.
+async function openLichess(position) {
+  board = app.context.pages()[0] ?? (await app.context.newPage());
+  const path = position ? `/${position.replace(/ /g, '_')}` : '';
+  await board.goto(`https://lichess.org/analysis${path}`, { waitUntil: 'domcontentloaded' });
+  await board.waitForFunction(() => window.site?.analysis?.node?.fen, null, { timeout: 30_000 });
+  panel ??= await app.context.newPage();
+  await panel.goto(app.url('src/sidepanel/panel.html'));
+  const tabId = await panel.evaluate(async () => (await chrome.tabs.query({ url: 'https://lichess.org/*' }))[0].id);
+  await panel.goto(app.url(`src/sidepanel/panel.html?tab=${tabId}`));
+  await expect(panel.locator('body')).toHaveAttribute('data-state', 'listening');
+}
+const lichessFen = (page) => page.evaluate(() => window.site.analysis.node.fen);
+
+test('a spoken move is played on a lichess board', async () => {
+  await openLichess();
+  await expect(panel.locator('#ctxText')).toContainText('lichess');
+  await say('e two to e four');
+  await expect(panel.locator('#title')).toHaveText('e2 → e4');
+  expect(await lichessFen(board)).toMatch(/^rnbqkbnr\/pppppppp\/8\/8\/4P3\/8\/PPPP1PPP\/RNBQKBNR b/);
+});
+

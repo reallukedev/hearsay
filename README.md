@@ -4,7 +4,7 @@ This is a one shotted project with Claude Opus 5.5 and some skills for [this per
 
 Voice control for Chrome that ships with chess defaults.
 
-Say **“e2 to e4”** and the move is played on chess.com: live games, bots, puzzles and analysis. Then give any other website its own voice commands, with no code unless you want it.
+Say **“e2 to e4”** and the move is played on chess.com or lichess: live games, bots, puzzles and analysis. Then give any other website its own voice commands, with no code unless you want it.
 
 Hearsay started as a replacement for a chess.com voice extension that stopped working, for a player with carpal tunnel in both hands. The goal is a whole game without touching the mouse.
 
@@ -21,7 +21,7 @@ Needs Chrome 138 or newer.
 
 ## Playing chess
 
-Open a board on chess.com, open the Hearsay panel (toolbar icon or <kbd>Alt</kbd><kbd>Shift</kbd><kbd>H</kbd>) and talk.
+Open a board on chess.com or lichess.org, open the Hearsay panel (toolbar icon or <kbd>Alt</kbd><kbd>Shift</kbd><kbd>H</kbd>) and talk.
 
 | Say | What happens |
 | --- | --- |
